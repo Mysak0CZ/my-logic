@@ -1,0 +1,27 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install  
+      uses: borales/actions-yarn@v2.3.0
+      with:
+        cmd: install
+
+    - name: Build
+      uses: borales/actions-yarn@v2.3.0
+      with:
+        cmd: build
+
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@4.0.0
+      with:
+        branch: gh-pages
+        folder: dist
