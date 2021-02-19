@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=0" />
+        <title>My logic</title>
+        <link href="./main.less" rel="stylesheet">
+    </head>
+    <body>
+        <div id="main"></div>
+        <div id="btn" onclick="myGame.openSidebarLeft()">
+            <div class="top"></div>
+            <div class="middle"></div>
+            <div class="bottom"></div>
+        </div>
+        <div class="sidebar left" id="sidebar_left">
+            <p>My logic</p>
+            <p>
+                <div id="mainMenuDiv"></div>
+                <br />
+                Circuits:
+                <div id="cirManDiv"></div>
+            </p>
+        </div>
+        <div class="sidebar right" id="sidebar_right">
+            <div id="optBtn" onclick="myGame.openSidebarRight(false)">
+                <div class="top"></div>
+                <div class="bottom"></div>
+            </div>
+            <div id="circuitOptions"></div>
+            <br />
+            <div id="pinConfig"></div>
+        </div>
+        <script src="main.ts"></script>
+    </body>
+</html>

@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "outDir": "./dest/",
+        "target": "es5",
+        "sourceMap": true,
+        "lib": [
+            "ESNext",
+            "DOM"
+        ],
+        "strict": true,
+        "esModuleInterop": true,
+        "downlevelIteration": true
+    },
+    "include": [
+        "src/**/*.d.ts",
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        ".git",
+        "node_modules"
+    ]
+}

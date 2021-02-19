@@ -1,0 +1,27 @@
+{
+	"name": "my-logic",
+	"version": "1.0.0",
+	"description": "A web aplication to simulate logic circuits",
+	"repository": "git@github.com:Mysak0CZ/my-logic.git",
+	"author": "Mysak0CZ <michalmpacal@gmail.com>",
+	"license": "MIT",
+	"scripts": {
+		"start": "parcel src/index.html",
+		"build": "parcel build src/index.html --public-url /my-logic/",
+		"clean": "rimraf ./dist ./.cache"
+	},
+	"dependencies": {
+		"@types/chroma-js": "^2.1.3",
+		"@types/lodash": "^4.14.168",
+		"@types/lz-string": "^1.3.34",
+		"chroma-js": "^2.1.0",
+		"less": "^4.1.1",
+		"lodash": "^4.17.20",
+		"lz-string": "^1.4.4",
+		"parcel-bundler": "^1.12.4",
+		"pixi-viewport": "^4.18.1",
+		"pixi.js": "^5.3.7",
+		"rimraf": "^3.0.2",
+		"typescript": "^4.1.5"
+	}
+}
