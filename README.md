@@ -19,7 +19,7 @@ V levém horním rohu lze otevřít hlavní menu. Toto menu obsahuje:
   - `Edit` - Umožňije posouvat obvody; Při držení Shift se obvody chytají na skrytou mřížku (Zkratka: Shift+E)
   - `Wire` - Při kliknutí na libovolný kolíček obvodu jej vybereme, po kliknutí na libovolný jiný je buď spojíme nebo rozpojíme podle toho, zda aktuáně jsou spojené.
   Při držení Shift zůstane původní kolíček vybrán (Zkratka: Shift+W)
-  - `Wire` - Při kliknutí na obvod jej smaže (Zkratka: Shift+D)
+  - `Delete` - Při kliknutí na obvod jej smaže (Zkratka: Shift+D)
   - `Configure` - Při kliknutí na obvod otevře jeho konfigurační menu
 - Rychlost simulace
   - Zadané číslo je pauza v ms mezi ticky. 0 znamená bez pauz, -1 pozastaveno
