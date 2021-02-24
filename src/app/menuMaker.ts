@@ -1,4 +1,6 @@
+/** Helper class for easily creating HTML menus */
 export class MenuMaker {
+    /** The root emelent of menu */
     private root: HTMLDivElement;
 
     constructor(root: HTMLDivElement) {
@@ -6,17 +8,20 @@ export class MenuMaker {
         this.root.innerHTML = "";
     }
 
+    /** Adds simple text */
     text(text: string): MenuMaker {
         this.root.append(text);
         return this;
     }
 
+    /** Adds linebreak */
     br(): MenuMaker {
         const elem = document.createElement("br");
         this.root.appendChild(elem);
         return this;
     }
 
+    /** Adds clickable link with callback */
     link(href: (() => void) | string, text: string, setup?: (elem: HTMLAnchorElement) => void): MenuMaker {
         const elem = document.createElement("a");
         elem.innerText = text;
@@ -34,6 +39,7 @@ export class MenuMaker {
         return this;
     }
 
+    /** Adds number input box */
     inputNumber(
         value?: number,
         min?: number,
@@ -60,6 +66,7 @@ export class MenuMaker {
         return this;
     }
 
+    /** Adds dropdown selection input */
     inputSelect(
         options: { [value: string]: string },
         selected?: string,
@@ -87,6 +94,7 @@ export class MenuMaker {
         return this;
     }
 
+    /** Adds text input box */
     inputText(
         value?: string,
         maxlen?: number,
@@ -110,6 +118,7 @@ export class MenuMaker {
         return this;
     }
 
+    /** Adds simple checkbox */
     inputCheckbox(
         value?: boolean,
         enabled: boolean = true,

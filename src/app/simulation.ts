@@ -7,13 +7,22 @@ import _ from "lodash";
 import { theGame } from "../globals";
 import { GameApp } from "./app";
 
+/** Handles drawing of circuits and connections */
 export class DrawManager {
 	public viewport: pixiViewport.Viewport;
+	/** If the graphics needs to be updated (because circuits moved/changed) */
 	public needsUpdate: boolean = true;
+	/** 
+	 * The connection state should be drawn.
+	 * This can be disabled to prevent need to redraw connections each tick.
+	 */
 	public renderConnectionStates: boolean = true;
+	/** The simulation this manager belongs to */
 	readonly simulation: Simulation;
 
+	/** Graphics of the world border */
 	private border: PIXI.Graphics | null = null;
+	/** Graphics of all drawn connections */
 	private connections: PIXI.Graphics | null = null;
 
 	constructor(interactionManager: PIXI.InteractionManager, simulation: Simulation) {
@@ -46,6 +55,7 @@ export class DrawManager {
 		return this.simulation.worldHeight;
 	}
 
+	/** Resizes the viewport on window resize */
 	public resize(): void {
 		this.viewport.resize(
 			window.innerWidth,
@@ -67,6 +77,7 @@ export class DrawManager {
 		});
 	}
 
+	/** Ticks the manager, redrawing all connections */
 	tick(): void {
 		if (this.connections === null) {
 			this.connections = this.viewport.addChildAt(new PIXI.Graphics(), 0);
@@ -101,6 +112,7 @@ export class DrawManager {
 	}
 }
 
+/** Simulation save structure */
 export interface SaveSimulation {
 	version: number;
 	worldWidth: number;
@@ -111,8 +123,11 @@ export interface SaveSimulation {
 	tick?: number;
 }
 
+/** The simulation itself */
 export class Simulation {
+	/** All circuits in simulation, mapped by their ID */
 	public circuits: Map<number, BaseCircuit> = new Map<number, BaseCircuit>();
+	/** Next free ID for new circuit */
 	private nxCircuitId: number = 1;
 
 	private networkMan: NetworkManager;
@@ -121,6 +136,7 @@ export class Simulation {
 
 	public drawManager: DrawManager;
 
+	/** Tick counter, goes up by one each tick */
 	private _currentTick: number = 0;
 	get currentTick(): number {
 		return this._currentTick;
@@ -134,6 +150,7 @@ export class Simulation {
 		return this._worldHeight;
 	}
 
+	/** Resizes the simulation */
 	resize(worldWidth: number, worldHeight: number): void {
 		this._worldHeight = worldHeight;
 		this._worldWidth = worldWidth;
@@ -147,6 +164,7 @@ export class Simulation {
 		this.drawManager = new DrawManager(game.interactionManager, this);
 	}
 
+	/** Adds new circuit to simulation */
 	addCircuit(circuit: BaseCircuit): void {
 		circuit.simulation = this;
 		circuit.id = this.nxCircuitId++;
@@ -156,6 +174,7 @@ export class Simulation {
 		}
 	}
 
+	/** Deletes circuit */
 	removeCircuit(circuit: BaseCircuit): void {
 		const id = circuit.id;
 		assert(this.circuits.has(id), `Asked to delete circuit id "${id}", but not found`);
@@ -163,21 +182,26 @@ export class Simulation {
 		circuit.destroy();
 	}
 
+	/** Finds a circuit in sumulation, or `null` if not found */
 	getCircuit(id: number): BaseCircuit | null {
 		const circuit = this.circuits.get(id);
 		return circuit === undefined ? null : circuit;
 	}
 
+	/** Updates all circuits */
 	update(force: boolean = false): void {
 		for (const c of this.circuits.values()) {
 			c.update(force);
 		}
 	}
 
+	/** Recreates networks after change */
 	recreateNetworks(): void {
 		this.networkMan.recreateNetworks();
+		this.drawManager.needsUpdate = true;
 	}
 
+	/** Simulation tick */
 	tick(): void {
 		this._currentTick++;
 		this.networkMan.tick();
@@ -187,6 +211,7 @@ export class Simulation {
 		this.update();
 	}
 
+	/** Deletes all circuits */
 	clear(): void {
 		for (const circuit of this.circuits.values()) {
 			circuit.destroy();
@@ -194,6 +219,7 @@ export class Simulation {
 		this.circuits.clear();
 	}
 
+	/** Exports the simulation into a save, optionally including state of simulation */
 	save(includeState: boolean = false): SaveSimulation {
 		const res: SaveSimulation = {
 			version: SAVE_VERSION,
@@ -214,6 +240,7 @@ export class Simulation {
 		return res;
 	}
 
+	/** Imports the simulation and restores it's state, if present in the save */
 	load(save: SaveSimulation): void {
 		this.clear();
 		assert(typeof save.version === "number");
@@ -227,7 +254,7 @@ export class Simulation {
 		for (const [id, cir] of Object.entries(save.circuits)) {
 			const numId = Number.parseInt(id, 10);
 			assert(typeof cir.type === "string");
-			const circuit = theGame.circuitManager.createCircuit("base", cir.type);
+			const circuit = theGame.circuitManager.createCircuit(cir.type);
 			if (circuit === null) throw new Error(`Failed to create circuit type ${cir.type}`);
 			circuit.simulation = this;
 			circuit.id = numId;
@@ -253,6 +280,7 @@ export class Simulation {
 		this.networkMan.tick();
 	}
 
+	/** Renumbers all circuits to compact ids, when circuits were removed */
 	compactIds(): void {
 		const circuits = Array.from(this.circuits.values());
 		this.circuits = new Map<number, BaseCircuit>();

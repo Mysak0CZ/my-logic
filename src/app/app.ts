@@ -6,27 +6,43 @@ import { CircuitManager } from "./circuitManager";
 import { makeMainMenu } from "./menus";
 import { setGame } from "../globals";
 
+/**
+ * The main class. Houses all componens of application
+ */
 export class GameApp {
+	/** The PIXI application for all graphical things */
 	public app: PIXI.Application;
-	public readonly simulation;
+	/** The world simulation */
+	public readonly simulation: Simulation;
+	/** Manager of known circuit types */
 	public readonly circuitManager = new CircuitManager();
+	/** PIXI's interaction manager for user events - like clicks and dragging */
 	public readonly interactionManager: PIXI.InteractionManager;
 
+	/** Current active view of the simuation */
 	public readonly activeView: DrawManager;
 
+	/** Which user interaction mode is currently active */
 	private _userMode: USER_MODES = USER_MODES.INTERACT;
+	/** Which pin is selected by user (wiring mode) */
 	private _selectedPin: Pin | null = null;
+	/** Which circuit is selected by user (configuration mode) */
 	private _selectedCircuit: BaseCircuit | null = null;
 
+	/** Save name of currently loaded save (to pre-fill into save menu) */
 	public currentSaveName: string = "";
+	/** Statistics counter of ticks in last second to display speed */
 	public tickCounter: number = 0;
 
+	/** If shift key is being held */
 	public shift: boolean = false;
 
+	/** Which pin is selected by user (wiring mode) */
 	get selectedPin(): Pin | null {
 		return this._selectedPin;
 	}
 
+	/** Which pin is selected by user (wiring mode) */
 	set selectedPin(pin: Pin | null) {
 		const oldPin = this._selectedPin;
 		this._selectedPin = pin;
@@ -35,10 +51,12 @@ export class GameApp {
 		if (this.activeView !== null) this.activeView.needsUpdate = true;
 	}
 
+	/** Which circuit is selected by user (configuration mode) */
 	get slectedCircuit(): BaseCircuit | null {
 		return this._selectedCircuit;
 	}
 
+	/** Which circuit is selected by user (configuration mode) */
 	set slectedCircuit(circuit: BaseCircuit | null) {
 		const oldCircuit = this._selectedCircuit;
 		this._selectedCircuit = circuit;
@@ -50,13 +68,17 @@ export class GameApp {
 		}
 	}
 
+	/** Set pause in ms between ticks */
 	private _tickSpeed: number | null = null;
+	/** Timer ID of scheduled next tick */
 	private tickTimer: null | number = null;
 
+	/** Set pause in ms between ticks */
 	get tickSpeed(): number | null {
 		return this._tickSpeed;
 	}
 
+	/** Set pause in ms between ticks */
 	set tickSpeed(sp: number | null) {
 		if (this.tickTimer !== null) {
 			clearTimeout(this.tickTimer);
@@ -68,10 +90,12 @@ export class GameApp {
 		}
 	}
 
+	/** Which user interaction mode is currently active */
 	get userMode(): USER_MODES {
 		return this._userMode;
 	}
 
+	/** Which user interaction mode is currently active */
 	set userMode(mode: USER_MODES) {
 		this._userMode = mode;
 		this.selectedPin = null;
@@ -102,6 +126,7 @@ export class GameApp {
 		this.onWindowResize();
 	}
 
+	/** When window is resized, resize views too */
 	private onWindowResize() {
 		const elem = document.getElementById("main")!;
 		const width = elem.clientWidth;
@@ -110,11 +135,13 @@ export class GameApp {
 		this.activeView.viewport.resize(width, height);
 	}
 
+	/** Update networks and draw them when user changes pin connections */
 	onLinksChanged(): void {
 		this.simulation.recreateNetworks();
 		this.activeView.tick();
 	}
 
+	/** Add new circuit into simulation */
 	addCircuit<T extends BaseCircuit>(circuit: T, move: boolean = true): T | null {
 		this.simulation.addCircuit(circuit);
 		const pos = this.activeView.viewport.center;
@@ -122,20 +149,24 @@ export class GameApp {
 		return circuit;
 	}
 
+	/** Delete circuit */
 	removeCircuit(circuit: BaseCircuit): void {
 		this.simulation.removeCircuit(circuit);
 	}
 
+	/** Updates simulation graphics */
 	update(force: boolean = false): void {
 		this.simulation.update(force);
 	}
 
+	/** Does game tick */
 	tick(): void {
 		this.simulation.tick();
 		this.activeView.tick();
 		this.tickCounter++;
 	}
 
+	/** Does game tick and scedules next one */
 	private autoTick() {
 		this.tick();
 		if (this._tickSpeed !== null) {
@@ -177,10 +208,12 @@ export class GameApp {
 		this.onWindowResize();
 	}
 
+	/** Saves the simulation */
 	save(includeState: boolean = false, compress: boolean = true): string {
 		return serializeSave(this.simulation.save(includeState), compress, true);
 	}
 
+	/** Loads the simulation */
 	load(save: string): void {
 		const parsedSave = deserializeSave(save);
 		this.simulation.load(parsedSave);

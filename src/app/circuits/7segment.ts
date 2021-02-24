@@ -5,7 +5,7 @@ import { BaseCircuitGra } from "./_baseGra";
 import { DrawManager } from "../simulation";
 import chroma from "chroma-js";
 import { MenuMaker } from "../menuMaker";
-import * as _ from "lodash";
+import _ from "lodash";
 
 const border = 4;
 const rectSize = 2;

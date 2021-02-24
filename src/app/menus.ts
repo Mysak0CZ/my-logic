@@ -5,6 +5,7 @@ import _ from "lodash";
 
 let tps: HTMLDivElement | null = null;
 
+/** Creates main menu and registers keyboard shortcuts */
 export function prepareMenus(): void {
 	theGame.circuitManager.setMenuElem(document.getElementById("cirManDiv") as HTMLDivElement);
 	const mainMenuDiv = document.getElementById("mainMenuDiv") as HTMLDivElement | null;
@@ -70,12 +71,14 @@ export function prepareMenus(): void {
 	}, interval * 1000);
 }
 
+/** Automaticalyl closes main menu on change on small devices */
 function onAction() {
 	if (window.innerWidth < 480) {
 		theGame.openSidebarLeft(false);
 	}
 }
 
+/** Generates main menu */
 export function makeMainMenu(elem: HTMLDivElement): void {
 	const maker = new MenuMaker(elem);
 	const userModes = {
@@ -121,6 +124,7 @@ export function makeMainMenu(elem: HTMLDivElement): void {
 		}, "Load");
 }
 
+/** Generates save menu */
 export function displaySaveMenu(): void {
 	const circuitOptions = document.getElementById("circuitOptions") as HTMLDivElement;
 	assert(circuitOptions !== null);
@@ -205,6 +209,7 @@ export function displaySaveMenu(): void {
 	makeSave();
 }
 
+/** Generates load menu */
 export function displayLoadMenu(): void {
 	const circuitOptions = document.getElementById("circuitOptions") as HTMLDivElement;
 	assert(circuitOptions !== null);

@@ -21,6 +21,7 @@ interface CirDef {
 	displayName: string;
 }
 
+/** List of all circuit types */
 const _baseCircuits: CirDef[] = [
 	CircuitSwitch,
 	CircuitLed,
@@ -41,31 +42,32 @@ _baseCircuits.forEach(circuit => {
 	baseCircuits[circuit.type] = circuit;
 });
 
+/** Name of localstorage variable for array of saves */
 const StorageListName = "savedCircuits";
+/** Name of localstorage variable prefix for saves */
 const StorageCircuitPrefix = "save-";
 
+/** Handles in-browser saves and circuit types */
 export class CircuitManager {
 	private menuElem: HTMLDivElement | null = null;
 
-	createCircuit(category: string, circuitName: string): BaseCircuit | null {
-		if (category === "base") {
-			const cir = baseCircuits[circuitName];
-			if (cir === undefined) {
-				console.error("Unknown base circuit: ", JSON.stringify(circuitName));
-				return null;
-			}
-			return new cir();
-		} else {
-			console.error(`Unknown circuit category: `, JSON.stringify(category));
+	/** Creates a circuit based on the type name */
+	createCircuit(circuitName: string): BaseCircuit | null {
+		const cir = baseCircuits[circuitName];
+		if (cir === undefined) {
+			console.error("Unknown base circuit: ", JSON.stringify(circuitName));
+			return null;
 		}
-		return null;
+		return new cir();
 	}
 
+	/** Saves the main menu element. Used by prepare menus */
 	setMenuElem(elem: HTMLDivElement): void {
 		this.menuElem = elem;
 		this.update();
 	}
 
+	/** Updates the circuits menu */
 	update(): void {
 		if (this.menuElem === null) return;
 		const maker = new MenuMaker(this.menuElem);
@@ -74,13 +76,14 @@ export class CircuitManager {
 			const name = def.displayName;
 			maker
 				.link(() => {
-					const cir = this.createCircuit("base", i);
+					const cir = this.createCircuit(i);
 					if (cir !== null) theGame.addCircuit(cir);
 				}, name)
 				.br();
 		}
 	}
 
+	/** Gets list of saves saved in browser */
 	listSaves(): string[] {
 		const dat = window.localStorage.getItem(StorageListName);
 		if (dat === null) return [];
@@ -89,10 +92,12 @@ export class CircuitManager {
 		return res;
 	}
 
+	/** Saves list of saves into browser's storage */
 	private storeSaves(saves: string[]): void {
 		window.localStorage.setItem(StorageListName, JSON.stringify(saves));
 	}
 
+	/** Saves a save into browser's storage */
 	saveSave(name: string, save: string): void {
 		const saves = this.listSaves();
 		if (!_.includes(saves, name)) {
@@ -102,10 +107,12 @@ export class CircuitManager {
 		window.localStorage.setItem(StorageCircuitPrefix + name, save);
 	}
 
+	/** Loads a save from browser's storage */
 	loadSave(name: string): string | null {
 		return window.localStorage.getItem(StorageCircuitPrefix + name);
 	}
 
+	/** Deletes a save inside browser's storage */
 	deleteSave(name: string): void {
 		let saves = this.listSaves();
 		if (_.includes(saves, name)) {

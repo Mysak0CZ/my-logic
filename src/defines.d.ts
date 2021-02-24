@@ -1,3 +1,4 @@
+/** Configuration of pin */
 interface PinInfo {
     input: boolean;
     output: boolean;

@@ -16,6 +16,7 @@ export enum USER_MODES {
 	CONFIGURE = 4
 }
 
+/** Version of the save; used for forward compatability */
 export const SAVE_VERSION: number = 1;
 
 export function assert(result: boolean, msg?: string): void {
@@ -27,7 +28,8 @@ export function assert(result: boolean, msg?: string): void {
 	}
 }
 
-export let compressionRatio: number = 1;
+/** Percent of compressed save size vs uncompressed save size */
+export let compressionRatio: number = 100;
 
 export function serializeSave(
 	save: SaveSimulation,
